@@ -1,21 +1,20 @@
-import data from '../data.js';
 const HomeScreen = {
-    render: async () => {
-        // const {products} = data;
-        const response = await fetch('http://localhost:5000/api/products', {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        if (!response || !response.ok) {
-            return `<div>Error in getting data</div>`;
-        }
+  render: async () => {
+    // const {products} = data;
+    const response = await fetch('http://localhost:5000/api/products', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response || !response.ok) {
+      return '<div>Error in getting data</div>';
+    }
 
-        const products = await response.json();
+    const products = await response.json();
 
-        return `
+    return `
         <ul class="products">
-            ${products.map( product => `
+            ${products.map((product) => `
             <li>
                 <div class="product">
                     <a href="/#/product/${product._id}">
@@ -36,8 +35,8 @@ const HomeScreen = {
             </li>
             `).join('\n')}
         </ul>
-        `
-    }
-}
+        `;
+  },
+};
 
 export default HomeScreen;
