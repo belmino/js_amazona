@@ -1,3 +1,5 @@
+import Rating from "../components/Rating";
+
 const HomeScreen = {
   render: async () => {
     // const {products} = data;
@@ -25,6 +27,12 @@ const HomeScreen = {
                     <a href="/#/product//${product._id}">
                         ${product.name}
                     </a>
+                </div>
+                <div class="product-rating">
+                  ${Rating.render({
+                    value: product.rating, 
+                    text: `${product.numReviews  } reviews`,
+                  })}
                 </div>
                 <div class="product-brand">
                     ${product.brand}
