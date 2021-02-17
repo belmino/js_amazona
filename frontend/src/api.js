@@ -90,3 +90,27 @@ export const update = async ({name, email, password}) => {
     return {error: err.message}
   }
 }
+
+export const createOrder = async (order) => {
+  try {
+    const { token } = getUserInfo();
+    const rawResponse = await fetch(`${apiUrl}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        order
+      }),
+    });
+    
+    const content = await rawResponse .json();
+    if (rawResponse.statusText !== 'Created') {
+      throw new Error(content.message);
+    }
+    return content;
+  } catch (err) {
+    return { error: err.response ? err.response.message : err.message };
+  }
+};
