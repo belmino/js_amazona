@@ -114,3 +114,56 @@ export const createOrder = async (order) => {
     return { error: err.response ? err.response.message : err.message };
   }
 };
+
+export const getOrder = async (id) => {
+  try {
+    const { token } = getUserInfo();
+    const rawResponse = await fetch(`${apiUrl}/api/orders/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const content = await rawResponse .json();
+    if (rawResponse.statusText !== 'OK') {
+      throw new Error(content.message);
+    }
+    return content;
+  } catch (err) {
+    return { error: err.message };
+  }
+};
+
+export const getPaypalClientId = async () => {
+  const rawResponse = await fetch(`${apiUrl}/api/paypal/clientId`,{
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const content = await rawResponse .json();
+  if (rawResponse.statusText !== 'OK') {
+    throw new Error(content.message);
+  }
+  return content.clientId;
+};
+
+export const payOrder = async (orderId, paymentResult) => {
+  try {
+    const { token } = getUserInfo();
+    const rawResponse = await fetch(`${apiUrl}/api/orders/${orderId}/pay`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data: paymentResult,
+    });
+    const content = await rawResponse .json();
+    if (rawResponse.statusText !== 'OK') {
+      throw new Error(content.message);
+    }
+    return content;
+  } catch (err) {
+    return { error: err.content ? err.content.message : err.message };
+  }
+};

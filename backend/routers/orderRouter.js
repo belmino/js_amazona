@@ -4,23 +4,57 @@ import { isAuth } from '../utils';
 import Order from '../models/orderModel';
 
 const orderRouter = express.Router();
+orderRouter.get(
+  '/:id',
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      res.send(order);
+    } else {
+      res.status(404).send({ message: 'Order Not Found' });
+    }
+  })
+);
 
 orderRouter.post(
   '/',
   isAuth,
   expressAsyncHandler(async (req, res) => {
+    const newOrder = req.body.order
     const order = new Order({
-      orderItems: req.body.orderItems,
+      orderItems: newOrder.orderItems,
       user: req.user._id,
-      shipping: req.body.shipping,
-      payment: req.body.payment,
-      itemsPrice: req.body.itemsPrice,
-      taxtPrice: req.body.taxtPrice,
-      shippingPrice: req.body.shippingPrice,
-      totalPrice: req.body.totalPrice,
+      shipping: newOrder.shipping,
+      payment: newOrder.payment,
+      itemsPrice: newOrder.itemsPrice,
+      taxPrice: newOrder.taxPrice,
+      shippingPrice: newOrder.shippingPrice,
+      totalPrice: newOrder.totalPrice,
     });
     const createdOrder = await order.save();
     res.status(201).send({ message: 'New Order Created', order: createdOrder });
+  })
+);
+
+orderRouter.put(
+  '/:id/pay',
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+      order.payment.paymentResult = {
+        payerID: req.body.payerID,
+        paymentID: req.body.paymentID,
+        orderID: req.body.orderID,
+      };
+      const updatedOrder = await order.save();
+      res.send({ message: 'Order Paid', order: updatedOrder });
+    } else {
+      res.status(404).send({ message: 'Order Not Found.' });
+    }
   })
 );
 export default orderRouter;
