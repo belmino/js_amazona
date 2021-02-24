@@ -1,6 +1,27 @@
 import { apiUrl } from "./config"
 import { getUserInfo } from "./localStorage";
 
+
+
+export const getProducts = async () => {
+  try {
+    const rawResponse = await fetch( `${apiUrl}/api/products`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const content  = await rawResponse.json();
+    if (rawResponse.statusText !== 'OK') {
+      throw new Error(content.message);
+    }
+    return content;
+  } catch (err) {
+    console.log(err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+
 export const getProduct = async (id) => {
   try {
     const rawResponse  = await fetch(`${apiUrl}/api/products/${id}`, {
@@ -131,6 +152,26 @@ export const getOrder = async (id) => {
     return content;
   } catch (err) {
     return { error: err.message };
+  }
+};
+
+
+export const getMyOrders = async () => {
+  try {
+    const { token } = getUserInfo();
+    const rawResponse = await fetch( `${apiUrl}/api/orders/mine`,{
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const content = await rawResponse .json();
+    if (rawResponse.statusText !== 'OK') {
+      throw new Error(content.message);
+    }
+    return content;
+  } catch (err) {
+    return { error: err.content ? err.content.message : err.message };
   }
 };
 

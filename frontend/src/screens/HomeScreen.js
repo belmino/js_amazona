@@ -1,21 +1,27 @@
+import { getProducts } from "../api";
 import Rating from "../components/Rating";
 import { hideLoading, showLoading } from "../utils";
 
 const HomeScreen = {
   render: async () => {
     // const {products} = data;
-    showLoading();
-    const response = await fetch('http://localhost:5000/api/products', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response || !response.ok) {
-      return '<div>Error in getting data</div>';
-    }
+    // showLoading();
+    // const response = await fetch('http://localhost:5000/api/products', {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+    // if (!response || !response.ok) {
+    //   return '<div>Error in getting data</div>';
+    // }
 
-    const products = await response.json();
-    hideLoading();
+    // const products = await response.json();
+    // hideLoading();
+
+    const products = await getProducts();
+    if (products.error) {
+      return `<div class="error">${products.error}</div>`;
+    }
 
     return `
         <ul class="products">
